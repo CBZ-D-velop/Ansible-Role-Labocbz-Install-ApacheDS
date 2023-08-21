@@ -73,3 +73,13 @@
         #add_certificates_bundle_dest_mode: "{{ bundle.dest_mode }}"
       ansible.builtin.include_role:
         name: "labocbz.add_certificates"
+
+    - name: "Include labocbz.install_java"
+      tags:
+        - "labocbz.install_java"
+      vars:
+        java_version: "{{ inv_java_version }}"
+        java_cpu_architecture: "{{ inv_java_cpu_architecture }}"
+        java_version_is_default: true
+      ansible.builtin.include_role:
+        name: "labocbz.install_java"
