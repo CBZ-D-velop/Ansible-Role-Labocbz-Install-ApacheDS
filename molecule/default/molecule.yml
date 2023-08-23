@@ -29,47 +29,6 @@ platforms:
     #storage_opt: overlay.mount_program=/usr/bin/fuse-overlayfs
     #storage_driver: overlay
 
-  - name: "molecule-local-instance-2-install-apacheds"
-    #image: "docker.io/geerlingguy/docker-debian11-ansible"
-    image: "local/debian-11-ansible:v3.0"
-    published_ports:
-      - "0.0.0.0:10389:10389/tcp"
-    dockerfile: "Dockerfile"
-    privileged: true
-    pre_build_image: true
-    override_command: true
-    command: "/sbin/init"
-    tmpfs:
-      - "/run"
-      - "/tmp"
-    volumes:
-      - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
-      - "/var/lib/containerd:/var/lib/containerd"
-    cgroupns_mode: "host"
-    cgroup_manager: "cgroupfs"
-    #storage_opt: overlay.mount_program=/usr/bin/fuse-overlayfs
-    #storage_driver: overlay
-
-  - name: "molecule-local-instance-3-install-apacheds"
-    #image: "docker.io/geerlingguy/docker-debian11-ansible"
-    image: "local/debian-11-ansible:v3.0"
-    published_ports:
-      - "0.0.0.0:10389:10389/tcp"
-    dockerfile: "Dockerfile"
-    privileged: true
-    pre_build_image: true
-    override_command: true
-    command: "/sbin/init"
-    tmpfs:
-      - "/run"
-      - "/tmp"
-    volumes:
-      - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
-      - "/var/lib/containerd:/var/lib/containerd"
-    cgroupns_mode: "host"
-    cgroup_manager: "cgroupfs"
-    #storage_opt: overlay.mount_program=/usr/bin/fuse-overlayfs
-    #storage_driver: overlay
 lint: |
   set -e
   yamllint .

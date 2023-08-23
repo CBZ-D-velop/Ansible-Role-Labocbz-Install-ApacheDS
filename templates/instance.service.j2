@@ -1,0 +1,28 @@
+##############################
+#                            #
+# Ansible / Tower managed on #
+#                            #
+##############################
+
+[Unit]
+Description=ApacheDS LDAP instance: {{ instance.name }}
+
+[Service]
+User={{ install_apacheds_user }}
+Group={{ install_apacheds_user }}
+Wants=network-online.target
+After=network.target network-online.target
+Type=forking
+RuntimeDirectory=apacheds
+RuntimeDirectoryMode=770
+WorkingDirectory={{ install_apacheds_path }}/bin/
+ExecStart={{ install_apacheds_path }}/bin/apacheds.sh {{ instance.name }} start
+ExecStop={{ install_apacheds_path }}/bin/apacheds.sh {{ instance.name }} stop
+ExecReload={{ install_apacheds_path }}/bin/apacheds.sh {{ instance.name }} restart
+RemainAfterExit=no
+Restart=on-failure
+LimitNOFILE=60000
+TimeoutSec=600
+
+[Install]
+WantedBy=multi-user.target

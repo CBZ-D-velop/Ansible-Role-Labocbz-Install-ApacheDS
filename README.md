@@ -140,6 +140,12 @@ Here you can put your change to keep a trace of your work and decisions.
 
 * First init of this role with the bootstrap_role playbook by Lord Robin Crombez
 
+### 2023-08-23: Started and default instance tested
+
+* Role can now install and copy the default instance to another one
+* No changement in the configuration for now
+* Tested with ldapsearch command
+
 ## Authors
 
 * Lord Robin Crombez
