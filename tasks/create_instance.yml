@@ -1,11 +1,11 @@
-- name: "Import, copy and enable ApacheDS instance {{ instance.name }}"
+- name: "create_instance | Import, copy and enable ApacheDS instance {{ instance.name }}"
   block:
-    - name: "Check if install dir exist"
+    - name: "create_instance | Check if install dir exist"
       register: file_check
       ansible.builtin.stat:
         path: "{{ install_apacheds_path }}/instances/{{ instance.name }}"
 
-    - name: "Create instance dir for {{ instance.name }}"
+    - name: "create_instance | Create instance dir for {{ instance.name }}"
       when: not file_check.stat.exists
       ansible.builtin.file:
         path: "{{ install_apacheds_path }}/instances/{{ instance.name }}"
@@ -15,7 +15,7 @@
         group: "{{ install_apacheds_group }}"
         owner: "{{ install_apacheds_user }}"
 
-    - name: "Instance not found, import / copy the default one"
+    - name: "create_instance | Instance not found, import / copy the default one"
       when: not file_check.stat.exists
       ansible.builtin.copy:
         src: "{{ install_apacheds_path }}/instances/default/"
@@ -25,7 +25,7 @@
         group: "{{ install_apacheds_group }}"
         owner: "{{ install_apacheds_user }}"
 
-    - name: "Import ApacheDS instance service file for {{ instance.name }}"
+    - name: "create_instance | Import ApacheDS instance service file for {{ instance.name }}"
       ansible.builtin.template:
         src: "templates/instance.service.j2"
         dest: "/etc/systemd/system/apacheds_{{ instance.name }}.service"
@@ -33,7 +33,7 @@
         group: "root"
         mode: "0700"
 
-    - name: "Enable and start ApacheDS"
+    - name: "create_instance | Enable and start ApacheDS"
       register: install_apacheds_service_status
       changed_when: not install_apacheds_service_status.state != "started"
       ansible.builtin.service:
@@ -42,7 +42,7 @@
         daemon_reload: true
         enabled: yes
 
-    - name: "Restart ApacheDS"
+    - name: "create_instance | Restart ApacheDS"
       register: install_apacheds_service_status
       changed_when: not install_apacheds_service_status.state != "restarted"
       ansible.builtin.service:
