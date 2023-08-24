@@ -5,7 +5,12 @@ install_apacheds_group: "apacheds"
 
 install_apacheds_install_dir: "/usr/share/apacheds"
 install_apacheds_path: "{{ install_apacheds_install_dir }}/apacheds-{{ install_apacheds_version }}"
+install_apacheds_ssl_path: "{{ install_apacheds_path }}/ssl"
+
+install_apacheds_ssl: true
+install_apacheds_ssl_crt: "{{ install_apacheds_ssl_path }}/mycert.crt"
+install_apacheds_ssl_key: "{{ install_apacheds_ssl_path }}/mycert.key"
+install_apacheds_ssl_p12_password: "password"
 
 install_apacheds_instances:
   - name: "local"
-    port: 10389

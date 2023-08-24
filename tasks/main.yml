@@ -1,6 +1,5 @@
 ---
 - name: "Install ldap-utils"
-  notify: "Enable and start MariaDB"
   ansible.builtin.package:
     update_cache: yes
     name:
@@ -32,8 +31,35 @@
         group: "{{ install_apacheds_group }}"
         owner: "{{ install_apacheds_user }}"
         extra_opts: [--strip-components=1]
-        exclude: 
-          - "*config.sample.inc.php"
+
+- name: "Handle TLS"
+  block:
+    - name: "Check if P12 exist"
+      register: file_check
+      ansible.builtin.stat:
+        path: "{{ install_apacheds_ssl_path }}/keystore.p12"
+
+    - name: "Remove P12"
+      when: file_check.stat.exists
+      register: output
+      changed_when: output.state != "absent"
+      ansible.builtin.file:
+        path: "{{ install_apacheds_ssl_path }}/keystore.p12"
+        state: absent
+
+    - name: "Create P12 file"
+      register: output
+      changed_when: output.rc != 0
+      ansible.builtin.command: >
+        openssl pkcs12 -export -in {{ install_apacheds_ssl_crt }} -inkey {{ install_apacheds_ssl_key }} -out {{ install_apacheds_ssl_path }}/keystore.p12 -passout pass:'{{ install_apacheds_ssl_p12_password }}'
+
+    - name: "Fix P12 permissions"
+      ansible.builtin.file:
+        path: "{{ install_apacheds_ssl_path }}/keystore.p12"
+        state: file
+        mode: "0700"
+        group: "{{ install_apacheds_group }}"
+        owner: "{{ install_apacheds_user }}"
 
 - name: "Create instances"
   loop: "{{ install_apacheds_instances }}"

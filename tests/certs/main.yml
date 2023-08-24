@@ -16,7 +16,7 @@ inv_cert_bundles:
   - name: "my-apacheds-cluster.domain.tld"
     type: "cert"
     src: "/tmp/my-apacheds-cluster.domain.tld.zip"
-    dest: "/etc/apacheds/ssl"
+    dest: "/usr/share/apacheds/apacheds-2.0.0.AM26/ssl"
     #src_user: "myUser"
     #src_password: "secretPassword"
     dest_user: "root"

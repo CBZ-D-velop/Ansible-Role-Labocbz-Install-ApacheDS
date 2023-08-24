@@ -102,7 +102,22 @@ Some vars a required to run this role:
 
 ```YAML
 ---
-your defaults vars here
+install_apacheds_version: "2.0.0.AM26"
+install_apacheds_user: "apacheds"
+install_apacheds_group: "apacheds"
+
+install_apacheds_install_dir: "/usr/share/apacheds"
+install_apacheds_path: "{{ install_apacheds_install_dir }}/apacheds-{{ install_apacheds_version }}"
+install_apacheds_ssl_path: "{{ install_apacheds_path }}/ssl"
+
+install_apacheds_ssl: true
+install_apacheds_ssl_crt: "{{ install_apacheds_ssl_path }}/mycert.crt"
+install_apacheds_ssl_key: "{{ install_apacheds_ssl_path }}/mycert.key"
+install_apacheds_ssl_p12_password: "password"
+
+install_apacheds_instances:
+  - name: "local"
+
 ```
 
 The best way is to modify these vars by copy the ./default/main.yml file into the ./vars and edit with your personnals requirements.
@@ -114,13 +129,32 @@ In order to surchage vars, you have multiples possibilities but for mains cases 
 ```YAML
 # From inventory
 ---
-all vars from to put/from your inventory
+inv_prepare_host_users:
+  - login: "apacheds"
+    group: "apacheds"
+
+inv_install_apacheds_version: "2.0.0.AM26"
+inv_install_apacheds_user: "apacheds"
+inv_install_apacheds_group: "apacheds"
+
+inv_install_apacheds_install_dir: "/usr/share/apacheds"
+inv_install_apacheds_path: "{{ install_apacheds_install_dir }}/apacheds-{{ install_apacheds_version }}"
+
+inv_install_apacheds_ssl_path: "{{ inv_install_apacheds_path }}/ssl"
+inv_install_apacheds_ssl: true
+inv_install_apacheds_ssl_crt: "{{ inv_install_apacheds_ssl_path }}/my-apacheds-cluster.domain.tld/my-apacheds-cluster.domain.tld.pem.crt"
+inv_install_apacheds_ssl_key: "{{ inv_install_apacheds_ssl_path }}/my-apacheds-cluster.domain.tld/my-apacheds-cluster.domain.tld.pem.key"
+inv_install_apacheds_ssl_p12_password: "password"
+
+inv_install_apacheds_instances:
+  - name: "local"
+
 ```
 
 ```YAML
 # From AWX / Tower
 ---
-all vars from to put/from AWX / Tower
+
 ```
 
 ### Run
@@ -128,8 +162,23 @@ all vars from to put/from AWX / Tower
 To run this role, you can copy the molecule/default/converge.yml playbook and add it into your playbook:
 
 ```YAML
----
-your converge.yml file here
+- name: "Include labocbz.install_apacheds"
+    tags:
+    - "labocbz.install_apacheds"
+    vars:
+    install_apacheds_version: "{{ inv_install_apacheds_version }}"
+    install_apacheds_user: "{{ inv_install_apacheds_user }}"
+    install_apacheds_group: "{{ inv_install_apacheds_group }}"
+    install_apacheds_install_dir: "{{ inv_install_apacheds_install_dir }}"
+    install_apacheds_path: "{{ inv_install_apacheds_path }}"
+    install_apacheds_instances: "{{ inv_install_apacheds_instances }}"
+    install_apacheds_ssl_path: "{{ inv_install_apacheds_ssl_path }}"
+    install_apacheds_ssl: "{{ inv_install_apacheds_ssl }}"
+    install_apacheds_ssl_crt: "{{ inv_install_apacheds_ssl_crt }}"
+    install_apacheds_ssl_key: "{{ inv_install_apacheds_ssl_key }}"
+    install_apacheds_ssl_p12_password: "{{ inv_install_apacheds_ssl_p12_password }}"
+    ansible.builtin.include_role:
+    name: "labocbz.install_apacheds"
 ```
 
 ## Architectural Decisions Records
@@ -145,6 +194,12 @@ Here you can put your change to keep a trace of your work and decisions.
 * Role can now install and copy the default instance to another one
 * No changement in the configuration for now
 * Tested with ldapsearch command
+
+### 2023-08-24: SSL Available and fixs
+
+* Role can now create a JKS for SSL remote access
+* You can now deploy a default instance and then do your stuff inside
+* Added some fix about lint
 
 ## Authors
 

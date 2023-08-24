@@ -33,16 +33,7 @@
         group: "root"
         mode: "0700"
 
-    - name: "create_instance | Enable and start ApacheDS"
-      register: install_apacheds_service_status
-      changed_when: not install_apacheds_service_status.state != "started"
-      ansible.builtin.service:
-        name: "apacheds_{{ instance.name }}"
-        state: "started"
-        daemon_reload: true
-        enabled: yes
-
-    - name: "create_instance | Restart ApacheDS"
+    - name: "create_instance | Enable and restart ApacheDS"
       register: install_apacheds_service_status
       changed_when: not install_apacheds_service_status.state != "restarted"
       ansible.builtin.service:
