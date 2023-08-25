@@ -23,8 +23,6 @@
         loop_var: instance
         index_var: index
       when: index == 0
-      vars:
-        port: "{{ index + 10389 }}"
       ansible.builtin.wait_for:
         host: "{{ inventory_hostname }}"
         port: "10389"
