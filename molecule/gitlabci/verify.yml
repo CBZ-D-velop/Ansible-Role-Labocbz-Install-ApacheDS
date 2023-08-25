@@ -12,23 +12,31 @@
       loop: "{{ inv_install_apacheds_instances }}"
       loop_control:
         loop_var: instance
+        index_var: index
+      when: index == 0
       ansible.builtin.systemd:
-        name: "apacheds-{{ instance.name }}"
+        name: "apacheds_{{ instance.name }}"
 
     - name: "Check ApacheDS connectivities"
       loop: "{{ inv_install_apacheds_instances }}"
       loop_control:
         loop_var: instance
+        index_var: index
+      when: index == 0
+      vars:
+        port: "{{ index + 10389 }}"
       ansible.builtin.wait_for:
         host: "{{ inventory_hostname }}"
-        port: "{{ instance.port }}"
+        port: "{{ port }}"
         timeout: 120
 
     - name: "Get default admin informations from instances"
       loop: "{{ inv_install_apacheds_instances }}"
       loop_control:
         loop_var: instance
+        index_var: index
+      when: index == 0
       register: admin_instance_result
       failed_when: admin_instance_result.stdout == ""
       changed_when: admin_instance_result.rc != 0
-      ansible.builtin.command: "ldapsearch -x -H ldap://localhost:{{ instance.port }} -D 'uid=admin,ou=system' -b 'dc=example,dc=com' -w 'secret'"
+      ansible.builtin.command: "ldapsearch -x -H ldap://localhost:10389 -D 'uid=admin,ou=system' -b 'dc=example,dc=com' -w '{{ instance.password }}'"

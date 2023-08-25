@@ -41,3 +41,20 @@
         state: "restarted"
         daemon_reload: true
         enabled: yes
+
+    - name: "create_instance | Check ApacheDS connectivities"
+      when: index == 0
+      vars:
+        port: "{{ index + 10389 }}"
+      ansible.builtin.wait_for:
+        host: "{{ inventory_hostname }}"
+        port: "{{ port }}"
+        timeout: 30
+
+    - name: "create_instance | Change the default admin password for {{ instance.name }}"
+      when: index == 0
+      register: admin_instance_result
+      failed_when: admin_instance_result.stdout != ""
+      changed_when: admin_instance_result.rc != 0 and  admin_instance_result.rc != 49
+      ansible.builtin.command: >
+        ldappasswd -x -H ldap://{{ inventory_hostname }}:10389 -D "uid=admin,ou=system" -w 'secret' -s '{{ instance.password }}'

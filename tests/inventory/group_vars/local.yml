@@ -10,11 +10,11 @@ inv_install_apacheds_group: "apacheds"
 inv_install_apacheds_install_dir: "/usr/share/apacheds"
 inv_install_apacheds_path: "{{ install_apacheds_install_dir }}/apacheds-{{ install_apacheds_version }}"
 
-inv_install_apacheds_ssl_path: "{{ inv_install_apacheds_path }}/ssl"
-inv_install_apacheds_ssl: true
-inv_install_apacheds_ssl_crt: "{{ inv_install_apacheds_ssl_path }}/my-apacheds-cluster.domain.tld/my-apacheds-cluster.domain.tld.pem.crt"
-inv_install_apacheds_ssl_key: "{{ inv_install_apacheds_ssl_path }}/my-apacheds-cluster.domain.tld/my-apacheds-cluster.domain.tld.pem.key"
-inv_install_apacheds_ssl_p12_password: "password"
-
 inv_install_apacheds_instances:
   - name: "local"
+    memory: "2048m"
+    password: "notsecret"
+
+  - name: "notlocal"
+    memory: "2048m"
+    password: "notsecretto"

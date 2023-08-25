@@ -14,10 +14,12 @@
 ![Tag: Debian](https://img.shields.io/badge/Tech-Debian-orange)
 ![Tag: ApacheDS](https://img.shields.io/badge/Tech-ApacheDS-orange)
 ![Tag: LDAP](https://img.shields.io/badge/Tech-LDAP-orange)
-![Tag: SSL/TLS](https://img.shields.io/badge/Tech-SSL%2FTLS-orange)
-![Tag: Cluster](https://img.shields.io/badge/Tech-Cluster-orange)
 
 An Ansible role to install and configure ApacheDS on your host.
+
+This Ansible role facilitates the deployment and customization of Apache Directory Server. It enables the creation and configuration of multiple LDAP instances based on the default one on a single machine through adjustable variables including version, installation directory, user, and group.
+
+Configuration flexibility is achieved using LDIF files. Enhanced security is provided by automatic password strengthening, while system services are generated for efficient management. Simplify the installation and management of LDAP instances using this versatile role.
 
 ## Folder structure
 
@@ -108,15 +110,11 @@ install_apacheds_group: "apacheds"
 
 install_apacheds_install_dir: "/usr/share/apacheds"
 install_apacheds_path: "{{ install_apacheds_install_dir }}/apacheds-{{ install_apacheds_version }}"
-install_apacheds_ssl_path: "{{ install_apacheds_path }}/ssl"
-
-install_apacheds_ssl: true
-install_apacheds_ssl_crt: "{{ install_apacheds_ssl_path }}/mycert.crt"
-install_apacheds_ssl_key: "{{ install_apacheds_ssl_path }}/mycert.key"
-install_apacheds_ssl_p12_password: "password"
 
 install_apacheds_instances:
   - name: "local"
+    memory: "2048m"
+    password: "notsecret"
 
 ```
 
@@ -140,14 +138,14 @@ inv_install_apacheds_group: "apacheds"
 inv_install_apacheds_install_dir: "/usr/share/apacheds"
 inv_install_apacheds_path: "{{ install_apacheds_install_dir }}/apacheds-{{ install_apacheds_version }}"
 
-inv_install_apacheds_ssl_path: "{{ inv_install_apacheds_path }}/ssl"
-inv_install_apacheds_ssl: true
-inv_install_apacheds_ssl_crt: "{{ inv_install_apacheds_ssl_path }}/my-apacheds-cluster.domain.tld/my-apacheds-cluster.domain.tld.pem.crt"
-inv_install_apacheds_ssl_key: "{{ inv_install_apacheds_ssl_path }}/my-apacheds-cluster.domain.tld/my-apacheds-cluster.domain.tld.pem.key"
-inv_install_apacheds_ssl_p12_password: "password"
-
 inv_install_apacheds_instances:
   - name: "local"
+    memory: "2048m"
+    password: "notsecret"
+
+  - name: "notlocal"
+    memory: "2048m"
+    password: "notsecretto"
 
 ```
 
@@ -172,11 +170,6 @@ To run this role, you can copy the molecule/default/converge.yml playbook and ad
     install_apacheds_install_dir: "{{ inv_install_apacheds_install_dir }}"
     install_apacheds_path: "{{ inv_install_apacheds_path }}"
     install_apacheds_instances: "{{ inv_install_apacheds_instances }}"
-    install_apacheds_ssl_path: "{{ inv_install_apacheds_ssl_path }}"
-    install_apacheds_ssl: "{{ inv_install_apacheds_ssl }}"
-    install_apacheds_ssl_crt: "{{ inv_install_apacheds_ssl_crt }}"
-    install_apacheds_ssl_key: "{{ inv_install_apacheds_ssl_key }}"
-    install_apacheds_ssl_p12_password: "{{ inv_install_apacheds_ssl_p12_password }}"
     ansible.builtin.include_role:
     name: "labocbz.install_apacheds"
 ```
@@ -200,6 +193,13 @@ Here you can put your change to keep a trace of your work and decisions.
 * Role can now create a JKS for SSL remote access
 * You can now deploy a default instance and then do your stuff inside
 * Added some fix about lint
+
+## 2023-08-25: Final version
+
+* Remove JKS/P12 creation because user have to provide it after
+* Based on the default LDIF, multiple instance will not start (port un use), so if multiple instance is wanted, you have to configure the first, relaunch the role and supress the first entry, configure the second, etc
+* Default password have been changed on run with LDAP base command, the service will to be up for that
+* Role create systemd services based on the instance name, like "apacheds_local"
 
 ## Authors
 

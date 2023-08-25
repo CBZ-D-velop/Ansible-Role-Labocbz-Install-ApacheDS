@@ -19,10 +19,5 @@
         install_apacheds_install_dir: "{{ inv_install_apacheds_install_dir }}"
         install_apacheds_path: "{{ inv_install_apacheds_path }}"
         install_apacheds_instances: "{{ inv_install_apacheds_instances }}"
-        install_apacheds_ssl_path: "{{ inv_install_apacheds_ssl_path }}"
-        install_apacheds_ssl: "{{ inv_install_apacheds_ssl }}"
-        install_apacheds_ssl_crt: "{{ inv_install_apacheds_ssl_crt }}"
-        install_apacheds_ssl_key: "{{ inv_install_apacheds_ssl_key }}"
-        install_apacheds_ssl_p12_password: "{{ inv_install_apacheds_ssl_p12_password }}"
       ansible.builtin.include_role:
         name: "labocbz.install_apacheds"
