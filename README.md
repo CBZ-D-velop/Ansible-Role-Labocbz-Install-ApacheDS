@@ -14,10 +14,12 @@
 ![Tag: Debian](https://img.shields.io/badge/Tech-Debian-orange)
 ![Tag: ApacheDS](https://img.shields.io/badge/Tech-ApacheDS-orange)
 ![Tag: LDAP](https://img.shields.io/badge/Tech-LDAP-orange)
-![Tag: SSL/TLS](https://img.shields.io/badge/Tech-SSL%2FTLS-orange)
-![Tag: Cluster](https://img.shields.io/badge/Tech-Cluster-orange)
 
 An Ansible role to install and configure ApacheDS on your host.
+
+This Ansible role facilitates the deployment and customization of Apache Directory Server. It enables the creation and configuration of multiple LDAP instances based on the default one on a single machine through adjustable variables including version, installation directory, user, and group.
+
+Configuration flexibility is achieved using LDIF files. Enhanced security is provided by automatic password strengthening, while system services are generated for efficient management. Simplify the installation and management of LDAP instances using this versatile role.
 
 ## Folder structure
 
@@ -102,7 +104,18 @@ Some vars a required to run this role:
 
 ```YAML
 ---
-your defaults vars here
+install_apacheds_version: "2.0.0.AM26"
+install_apacheds_user: "apacheds"
+install_apacheds_group: "apacheds"
+
+install_apacheds_install_dir: "/usr/share/apacheds"
+install_apacheds_path: "{{ install_apacheds_install_dir }}/apacheds-{{ install_apacheds_version }}"
+
+install_apacheds_instances:
+  - name: "local"
+    memory: "2048m"
+    password: "notsecret"
+
 ```
 
 The best way is to modify these vars by copy the ./default/main.yml file into the ./vars and edit with your personnals requirements.
@@ -114,13 +127,32 @@ In order to surchage vars, you have multiples possibilities but for mains cases 
 ```YAML
 # From inventory
 ---
-all vars from to put/from your inventory
+inv_prepare_host_users:
+  - login: "apacheds"
+    group: "apacheds"
+
+inv_install_apacheds_version: "2.0.0.AM26"
+inv_install_apacheds_user: "apacheds"
+inv_install_apacheds_group: "apacheds"
+
+inv_install_apacheds_install_dir: "/usr/share/apacheds"
+inv_install_apacheds_path: "{{ install_apacheds_install_dir }}/apacheds-{{ install_apacheds_version }}"
+
+inv_install_apacheds_instances:
+  - name: "local"
+    memory: "2048m"
+    password: "notsecret"
+
+  - name: "notlocal"
+    memory: "2048m"
+    password: "notsecretto"
+
 ```
 
 ```YAML
 # From AWX / Tower
 ---
-all vars from to put/from AWX / Tower
+
 ```
 
 ### Run
@@ -128,8 +160,18 @@ all vars from to put/from AWX / Tower
 To run this role, you can copy the molecule/default/converge.yml playbook and add it into your playbook:
 
 ```YAML
----
-your converge.yml file here
+- name: "Include labocbz.install_apacheds"
+    tags:
+    - "labocbz.install_apacheds"
+    vars:
+    install_apacheds_version: "{{ inv_install_apacheds_version }}"
+    install_apacheds_user: "{{ inv_install_apacheds_user }}"
+    install_apacheds_group: "{{ inv_install_apacheds_group }}"
+    install_apacheds_install_dir: "{{ inv_install_apacheds_install_dir }}"
+    install_apacheds_path: "{{ inv_install_apacheds_path }}"
+    install_apacheds_instances: "{{ inv_install_apacheds_instances }}"
+    ansible.builtin.include_role:
+    name: "labocbz.install_apacheds"
 ```
 
 ## Architectural Decisions Records
@@ -139,6 +181,25 @@ Here you can put your change to keep a trace of your work and decisions.
 ### 2023-08-21: First Init
 
 * First init of this role with the bootstrap_role playbook by Lord Robin Crombez
+
+### 2023-08-23: Started and default instance tested
+
+* Role can now install and copy the default instance to another one
+* No changement in the configuration for now
+* Tested with ldapsearch command
+
+### 2023-08-24: SSL Available and fixs
+
+* Role can now create a JKS for SSL remote access
+* You can now deploy a default instance and then do your stuff inside
+* Added some fix about lint
+
+## 2023-08-25: Final version
+
+* Remove JKS/P12 creation because user have to provide it after
+* Based on the default LDIF, multiple instance will not start (port un use), so if multiple instance is wanted, you have to configure the first, relaunch the role and supress the first entry, configure the second, etc
+* Default password have been changed on run with LDAP base command, the service will to be up for that
+* Role create systemd services based on the instance name, like "apacheds_local"
 
 ## Authors
 

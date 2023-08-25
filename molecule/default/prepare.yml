@@ -11,6 +11,8 @@
     - name: "Include labocbz.prepare_host"
       tags:
         - "labocbz.prepare_host"
+      vars:
+        prepare_host_users: "{{ inv_prepare_host_users }}"
       ansible.builtin.include_role:
         name: "labocbz.prepare_host"
 
@@ -73,3 +75,13 @@
         #add_certificates_bundle_dest_mode: "{{ bundle.dest_mode }}"
       ansible.builtin.include_role:
         name: "labocbz.add_certificates"
+
+    - name: "Include labocbz.install_java"
+      tags:
+        - "labocbz.install_java"
+      vars:
+        java_version: "{{ inv_java_version }}"
+        java_cpu_architecture: "{{ inv_java_cpu_architecture }}"
+        java_version_is_default: true
+      ansible.builtin.include_role:
+        name: "labocbz.install_java"

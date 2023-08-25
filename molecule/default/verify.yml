@@ -5,3 +5,36 @@
   hosts: "all"
   gather_facts: false
   tasks:
+
+    - name: "Get ApacheDS services current state"
+      register: install_apacheds_service_status
+      failed_when: not install_apacheds_service_status.status.ActiveState == 'active'
+      loop: "{{ inv_install_apacheds_instances }}"
+      loop_control:
+        loop_var: instance
+        index_var: index
+      when: index == 0
+      ansible.builtin.systemd:
+        name: "apacheds_{{ instance.name }}"
+
+    - name: "Check ApacheDS connectivities"
+      loop: "{{ inv_install_apacheds_instances }}"
+      loop_control:
+        loop_var: instance
+        index_var: index
+      when: index == 0
+      ansible.builtin.wait_for:
+        host: "{{ inventory_hostname }}"
+        port: "10389"
+        timeout: 120
+
+    - name: "Get default admin informations from instances"
+      loop: "{{ inv_install_apacheds_instances }}"
+      loop_control:
+        loop_var: instance
+        index_var: index
+      when: index == 0
+      register: admin_instance_result
+      failed_when: admin_instance_result.stdout == ""
+      changed_when: admin_instance_result.rc != 0
+      ansible.builtin.command: "ldapsearch -x -H ldap://localhost:10389 -D 'uid=admin,ou=system' -b 'dc=example,dc=com' -w '{{ instance.password }}'"
