@@ -47,7 +47,7 @@
       ansible.builtin.wait_for:
         host: "{{ inventory_hostname }}"
         port: "10389"
-        timeout: 30
+        timeout: 240
 
     - name: "create_instance | Change the default admin password for {{ instance.name }}"
       when: index == 0
