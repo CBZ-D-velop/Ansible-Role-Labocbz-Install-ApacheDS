@@ -27,7 +27,7 @@
         port: "{{ index + 10389 }}"
       ansible.builtin.wait_for:
         host: "{{ inventory_hostname }}"
-        port: "{{ port }}"
+        port: "10389"
         timeout: 120
 
     - name: "Get default admin informations from instances"
