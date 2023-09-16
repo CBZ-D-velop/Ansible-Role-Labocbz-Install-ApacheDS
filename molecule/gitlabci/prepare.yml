@@ -71,8 +71,8 @@
         #add_certificates_bundle_src_user: "{{ bundle.src_user }}"
         #add_certificates_bundle_src_password: "{{ bundle.src_password }}"
         #add_certificates_bundle_dest_user: "{{ bundle.dest_user }}"
-        #add_certificates_bundle_dest_group: "{{ bundle.dest_group }}"
-        #add_certificates_bundle_dest_mode: "{{ bundle.dest_mode }}"
+        add_certificates_bundle_dest_group: "{{ bundle.dest_group }}"
+        add_certificates_bundle_dest_mode: "{{ bundle.dest_mode }}"
       ansible.builtin.include_role:
         name: "labocbz.add_certificates"
 

@@ -10,3 +10,10 @@ install_apacheds_instances:
   - name: "local"
     memory: "2048m"
     password: "notsecret"
+    loglevel: "WARM"
+    ldap_port: 10389
+    ldaps_port: 10636
+    ssl: false
+    #crt_file: ""
+    #key_file: ""
+    #jks_password: ""

@@ -194,12 +194,19 @@ Here you can put your change to keep a trace of your work and decisions.
 * You can now deploy a default instance and then do your stuff inside
 * Added some fix about lint
 
-## 2023-08-25: Final version
+### 2023-08-25: Final version
 
 * Remove JKS/P12 creation because user have to provide it after
 * Based on the default LDIF, multiple instance will not start (port un use), so if multiple instance is wanted, you have to configure the first, relaunch the role and supress the first entry, configure the second, etc
 * Default password have been changed on run with LDAP base command, the service will to be up for that
 * Role create systemd services based on the instance name, like "apacheds_local"
+
+### 2023-09-16: Multipe instance install
+
+* Role now support install multiple instance and set different ports
+* Work for SSL in progress
+* Work for partition change in progress
+* Modification have to be on the verify first server statup, so any modification after is not possible
 
 ## Authors
 

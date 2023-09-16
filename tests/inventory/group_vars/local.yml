@@ -9,12 +9,27 @@ inv_install_apacheds_group: "apacheds"
 
 inv_install_apacheds_install_dir: "/usr/share/apacheds"
 inv_install_apacheds_path: "{{ install_apacheds_install_dir }}/apacheds-{{ install_apacheds_version }}"
+inv_install_apacheds_ssl_path: "{{ inv_install_apacheds_path }}/ssl"
 
 inv_install_apacheds_instances:
   - name: "local"
     memory: "2048m"
     password: "notsecret"
+    loglevel: "WARM"
+    ldap_port: 10389
+    ldaps_port: 10636
+    ssl: true
+    crt_file: "{{ inv_install_apacheds_ssl_path }}/my-apacheds-cluster.domain.tld/my-apacheds-cluster.domain.tld.pem.crt"
+    key_file: "{{ inv_install_apacheds_ssl_path }}/my-apacheds-cluster.domain.tld/my-apacheds-cluster.domain.tld.pem.key"
+    jks_password: "notRealSecretTo"
 
   - name: "notlocal"
     memory: "2048m"
     password: "notsecretto"
+    loglevel: "WARM"
+    ldap_port: 10390
+    ldaps_port: 10637
+    ssl: true
+    crt_file: "{{ inv_install_apacheds_ssl_path }}/my-apacheds-cluster.domain.tld/my-apacheds-cluster.domain.tld.pem.crt"
+    key_file: "{{ inv_install_apacheds_ssl_path }}/my-apacheds-cluster.domain.tld/my-apacheds-cluster.domain.tld.pem.key"
+    jks_password: "notRealSecretTo"
