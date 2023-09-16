@@ -25,6 +25,14 @@
         group: "{{ install_apacheds_group }}"
         owner: "{{ install_apacheds_user }}"
 
+    - name: "create_instance | Import Log4j configuration file for {{ instance.name }}"
+      ansible.builtin.template:
+        src: "templates/log4j.properties.j2"
+        dest: "{{ install_apacheds_path }}/instances/{{ instance.name }}/conf/log4j.properties"
+        mode: "0700"
+        group: "{{ install_apacheds_group }}"
+        owner: "{{ install_apacheds_user }}"
+
     - name: "create_instance | Import ApacheDS instance service file for {{ instance.name }}"
       ansible.builtin.template:
         src: "templates/instance.service.j2"
@@ -33,7 +41,74 @@
         group: "root"
         mode: "0700"
 
-    - name: "create_instance | Enable and restart ApacheDS"
+    - name: "create_instance | Set the LDAP instance port for {{ instance.name }}"
+      when: not file_check.stat.exists
+      ansible.builtin.replace:
+        path: "{{ install_apacheds_path }}/instances/{{ instance.name }}/conf/config.ldif"
+        regexp: "ads-systemport: 10389"
+        replace: "ads-systemport: {{ instance.ldap_port }}"
+
+    - name: "create_instance | Set the LDAPS instance port for {{ instance.name }}"
+      when: not file_check.stat.exists and (instance.ssl | default(false))
+      ansible.builtin.replace:
+        path: "{{ install_apacheds_path }}/instances/{{ instance.name }}/conf/config.ldif"
+        regexp: "ads-systemport: 10636"
+        replace: "ads-systemport: {{ instance.ldaps_port }}"
+
+    - name: "create_instance | Disable the LDAPS access for {{ instance.name }}"
+      when: not file_check.stat.exists and not (instance.ssl | default(false))
+      ansible.builtin.lineinfile:
+        path: "{{ install_apacheds_path }}/instances/{{ instance.name }}/conf/config.ldif"
+        regexp: '^ads-transportid: ldaps$'
+        line: |
+          ads-transportid: ldaps
+          objectclass: ads-transport
+          objectclass: ads-tcpTransport
+          objectClass: ads-base
+          objectclass: top
+          ads-enabled: FALSE
+
+    - name: "create_instance | Handle JKS for {{ instance.name }}"
+      when: instance.ssl | default (false)
+      block:
+      - name: "create_instance | Check if JKS exist for {{ instance.name }}"
+        register: jks_path_stat
+        ansible.builtin.stat:
+          path: "{{ install_apacheds_path }}/instances/{{ instance.name }}/conf/keystore.jks"
+
+      - name: "create_instance | Remove JKS for {{ instance.name }}"
+        when: jks_path_stat.stat.exists
+        register: output
+        changed_when: output.state != "absent"
+        ansible.builtin.file:
+          path: "{{ install_apacheds_path }}/instances/{{ instance.name }}/conf/keystore.jks"
+          state: absent
+          mode: "0770"
+          group: "{{ install_apacheds_group }}"
+          owner: "{{ install_apacheds_user }}"
+
+      - name: "create_instance | Create the P12 file for {{ instance.name }}"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.command: "openssl pkcs12 -export -inkey {{ instance.key_file }} -in {{ instance.crt_file }} -out {{ install_apacheds_path }}/instances/{{ instance.name }}/conf/keystore.p12 -password pass:{{ instance.jks_password }}"
+
+      - name: "create_instance | Create the JKS file for {{ instance.name }}"
+        register: output
+        changed_when: output.rc != 0
+        ansible.builtin.command: "keytool -importkeystore -srckeystore {{ install_apacheds_path }}/instances/{{ instance.name }}/conf/keystore.p12 -srcstoretype PKCS12 -destkeystore {{ install_apacheds_path }}/instances/{{ instance.name }}/conf/keystore.jks -srcstorepass '{{ instance.jks_password }}' -deststorepass '{{ instance.jks_password }}' -noprompt"
+
+      - name: "create_instance | Set final permissions for {{ instance.name }}"
+        register: output
+        changed_when: output.size < 0
+        ansible.builtin.file:
+          path: "{{ install_apacheds_path }}/instances/{{ instance.name }}"
+          state: directory
+          recurse: yes
+          mode: "0700"
+          group: "{{ install_apacheds_group }}"
+          owner: "{{ install_apacheds_user }}"
+
+    - name: "create_instance | Enable and restart ApacheDS for {{ instance.name }}"
       register: install_apacheds_service_status
       changed_when: not install_apacheds_service_status.state != "restarted"
       ansible.builtin.service:
@@ -42,17 +117,23 @@
         daemon_reload: true
         enabled: yes
 
-    - name: "create_instance | Check ApacheDS connectivities"
-      when: index == 0
+    - name: "create_instance | Check ApacheDS connectivities LDAP for {{ instance.name }}"
+      when: not (instance.ssl | default(false))
       ansible.builtin.wait_for:
         host: "{{ inventory_hostname }}"
-        port: "10389"
+        port: "{{ instance.ldap_port }}"
+        timeout: 240
+
+    - name: "create_instance | Check ApacheDS connectivities LDAPS for {{ instance.name }}"
+      when: instance.ssl | default(false)
+      ansible.builtin.wait_for:
+        host: "{{ inventory_hostname }}"
+        port: "{{ instance.ldaps_port }}"
         timeout: 240
 
     - name: "create_instance | Change the default admin password for {{ instance.name }}"
-      when: index == 0
       register: admin_instance_result
       failed_when: admin_instance_result.stdout != ""
       changed_when: admin_instance_result.rc != 0 and  admin_instance_result.rc != 49
       ansible.builtin.command: >
-        ldappasswd -x -H ldap://{{ inventory_hostname }}:10389 -D "uid=admin,ou=system" -w 'secret' -s '{{ instance.password }}'
+        ldappasswd -x -H ldap://{{ inventory_hostname }}:{{ instance.ldap_port }} -D "uid=admin,ou=system" -w 'secret' -s '{{ instance.password }}'
