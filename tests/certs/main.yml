@@ -19,7 +19,7 @@ inv_cert_bundles:
     dest: "/usr/share/apacheds/apacheds-2.0.0.AM26/ssl"
     #src_user: "myUser"
     #src_password: "secretPassword"
-    dest_user: "apacheds"
-    dest_group: "apacheds"
+    dest_user: "root"
+    dest_group: "root"
     dest_mode: "0700"
 
