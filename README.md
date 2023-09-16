@@ -208,6 +208,14 @@ Here you can put your change to keep a trace of your work and decisions.
 * Work for partition change in progress
 * Modification have to be on the verify first server statup, so any modification after is not possible
 
+### 2023-09-1b: No automatic SSL/TLS
+
+* Role dont change / edit the default JKS used by ApacheDS
+* Role create a JKS and P12 file with a defined password, you have to edit the configuration after the first start
+* Dont forget to disable Anonymous Access
+* If SSL/TLS not setted, role disable the default LDAPS endpoint
+* Role dont edit que default partition
+
 ## Authors
 
 * Lord Robin Crombez

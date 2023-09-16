@@ -12,29 +12,34 @@
       loop: "{{ inv_install_apacheds_instances }}"
       loop_control:
         loop_var: instance
-        index_var: index
-      when: index == 0
       ansible.builtin.systemd:
         name: "apacheds_{{ instance.name }}"
 
-    - name: "Check ApacheDS connectivities"
+    - name: "Check ApacheDS connectivities LDAP"
+      when: not (instance.ssl | default(false))
       loop: "{{ inv_install_apacheds_instances }}"
       loop_control:
         loop_var: instance
-        index_var: index
-      when: index == 0
       ansible.builtin.wait_for:
         host: "localhost"
-        port: "10389"
+        port: "{{ instance.ldap_port }}"
         timeout: 120
 
-    - name: "Get default admin informations from instances"
+    - name: "Check ApacheDS connectivities LDAPS"
+      when: instance.ssl | default(false)
       loop: "{{ inv_install_apacheds_instances }}"
       loop_control:
         loop_var: instance
-        index_var: index
-      when: index == 0
+      ansible.builtin.wait_for:
+        host: "localhost"
+        port: "{{ instance.ldaps_port }}"
+        timeout: 120
+
+    - name: "Get default admin informations from instances LDAP"
+      loop: "{{ inv_install_apacheds_instances }}"
+      loop_control:
+        loop_var: instance
       register: admin_instance_result
       failed_when: admin_instance_result.stdout == ""
       changed_when: admin_instance_result.rc != 0
-      ansible.builtin.command: "ldapsearch -x -H ldap://localhost:10389 -D 'uid=admin,ou=system' -b 'dc=example,dc=com' -w '{{ instance.password }}'"
+      ansible.builtin.command: "ldapsearch -x -H ldap://localhost:{{ instance.ldap_port }} -D 'uid=admin,ou=system' -b 'dc=example,dc=com' -w '{{ instance.password }}'"

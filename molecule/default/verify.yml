@@ -15,7 +15,8 @@
       ansible.builtin.systemd:
         name: "apacheds_{{ instance.name }}"
 
-    - name: "Check ApacheDS connectivities"
+    - name: "Check ApacheDS connectivities LDAP"
+      when: not (instance.ssl | default(false))
       loop: "{{ inv_install_apacheds_instances }}"
       loop_control:
         loop_var: instance
@@ -24,7 +25,17 @@
         port: "{{ instance.ldap_port }}"
         timeout: 120
 
-    - name: "Get default admin informations from instances"
+    - name: "Check ApacheDS connectivities LDAPS"
+      when: instance.ssl | default(false)
+      loop: "{{ inv_install_apacheds_instances }}"
+      loop_control:
+        loop_var: instance
+      ansible.builtin.wait_for:
+        host: "localhost"
+        port: "{{ instance.ldaps_port }}"
+        timeout: 120
+
+    - name: "Get default admin informations from instances LDAP"
       loop: "{{ inv_install_apacheds_instances }}"
       loop_control:
         loop_var: instance
