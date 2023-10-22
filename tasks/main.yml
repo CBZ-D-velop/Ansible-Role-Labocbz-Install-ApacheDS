@@ -1,7 +1,7 @@
 ---
 - name: "Install ldap-utils"
   ansible.builtin.package:
-    update_cache: yes
+    update_cache: false
     name:
       - "ldap-utils"
 
