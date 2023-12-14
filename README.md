@@ -161,16 +161,16 @@ To run this role, you can copy the molecule/default/converge.yml playbook and ad
 
 ```YAML
 - name: "Include labocbz.install_apacheds"
-    tags:
+  tags:
     - "labocbz.install_apacheds"
-    vars:
+  vars:
     install_apacheds_version: "{{ inv_install_apacheds_version }}"
     install_apacheds_user: "{{ inv_install_apacheds_user }}"
     install_apacheds_group: "{{ inv_install_apacheds_group }}"
     install_apacheds_install_dir: "{{ inv_install_apacheds_install_dir }}"
     install_apacheds_path: "{{ inv_install_apacheds_path }}"
     install_apacheds_instances: "{{ inv_install_apacheds_instances }}"
-    ansible.builtin.include_role:
+  ansible.builtin.include_role:
     name: "labocbz.install_apacheds"
 ```
 
@@ -222,6 +222,10 @@ Here you can put your change to keep a trace of your work and decisions.
 * Molecule now use remote Docker image by Lord Robin Crombez
 * Molecule now use custom Docker image in CI/CD by env vars
 * New CICD with needs and optimization
+
+### 2023-12-14: System users
+
+* Role can now use system users and address groups
 
 ## Authors
 

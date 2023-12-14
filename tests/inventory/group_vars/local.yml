@@ -1,11 +1,11 @@
 ---
-inv_prepare_host_users:
+inv_prepare_host_system_users:
   - login: "apacheds"
     group: "apacheds"
 
 inv_install_apacheds_version: "2.0.0.AM26"
-inv_install_apacheds_user: "root"
-inv_install_apacheds_group: "root"
+inv_install_apacheds_user: "apacheds"
+inv_install_apacheds_group: "apacheds"
 
 inv_install_apacheds_install_dir: "/usr/share/apacheds"
 inv_install_apacheds_path: "{{ inv_install_apacheds_install_dir }}/apacheds-{{ inv_install_apacheds_version }}"

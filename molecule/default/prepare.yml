@@ -12,7 +12,7 @@
       tags:
         - "labocbz.prepare_host"
       vars:
-        prepare_host_users: "{{ inv_prepare_host_users }}"
+        prepare_host_system_users: "{{ inv_prepare_host_system_users }}"
       ansible.builtin.include_role:
         name: "labocbz.prepare_host"
 
@@ -68,7 +68,7 @@
         add_certificates_bundle_dest: "{{ bundle.dest }}"
         #add_certificates_bundle_src_user: "{{ bundle.src_user }}"
         #add_certificates_bundle_src_password: "{{ bundle.src_password }}"
-        #add_certificates_bundle_dest_user: "{{ bundle.dest_user }}"
+        add_certificates_bundle_dest_user: "{{ bundle.dest_user }}"
         add_certificates_bundle_dest_group: "{{ bundle.dest_group }}"
         add_certificates_bundle_dest_mode: "{{ bundle.dest_mode }}"
       ansible.builtin.include_role:
