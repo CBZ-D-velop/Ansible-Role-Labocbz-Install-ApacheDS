@@ -227,6 +227,12 @@ Here you can put your change to keep a trace of your work and decisions.
 
 * Role can now use system users and address groups
 
+### 2024-02-02: Multi instance and SSL
+
+* Multi instance doesn't support port edition (can be broken on install / configuration)
+* SSL/TLS materials are prepared, but you have to configure your install to use them
+* Use latest version of ApacheDS 27
+
 ## Authors
 
 * Lord Robin Crombez
