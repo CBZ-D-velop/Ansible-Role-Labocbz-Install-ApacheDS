@@ -3,7 +3,7 @@ inv_prepare_host_system_users:
   - login: "apacheds"
     group: "apacheds"
 
-inv_install_apacheds_version: "2.0.0.AM26"
+inv_install_apacheds_version: "2.0.0.AM27"
 inv_install_apacheds_user: "apacheds"
 inv_install_apacheds_group: "apacheds"
 
@@ -12,19 +12,16 @@ inv_install_apacheds_path: "{{ inv_install_apacheds_install_dir }}/apacheds-{{ i
 inv_install_apacheds_ssl_path: "{{ inv_install_apacheds_path }}/ssl"
 
 inv_install_apacheds_instances:
-  - name: "local"
+  - name: "labo-cbz"
     memory: "2048m"
-    password: "notsecret"
+    password: "secret"
     loglevel: "WARN"
-    ldap_port: 10389
-    ldaps_port: 10636
     ssl: true
-    crt_file: "{{ inv_install_apacheds_ssl_path }}/my-apacheds-cluster.domain.tld/my-apacheds-cluster.domain.tld.pem.crt"
-    key_file: "{{ inv_install_apacheds_ssl_path }}/my-apacheds-cluster.domain.tld/my-apacheds-cluster.domain.tld.pem.key"
+    crt_file: "{{ inv_install_apacheds_ssl_path }}/my-apacheds-server.domain.tld/my-apacheds-server.domain.tld.pem.crt"
+    key_file: "{{ inv_install_apacheds_ssl_path }}/my-apacheds-server.domain.tld/my-apacheds-server.domain.tld.pem.key"
     jks_password: "notRealSecretTo"
 
-  - name: "notlocal"
-    memory: "2048m"
-    password: "notsecretto"
-    loglevel: "WARN"
-    ldap_port: 10390
+  #- name: "notlocal"notRealSecretTo
+  #  memory: "2048m"
+  #  password: "notsecretto"
+  #  loglevel: "WARN"

@@ -13,10 +13,10 @@ inv_cert_bundles:
     type: "CA"
     src: "/tmp/My-Local-Ansible-Intermediate-CA-2.pem.crt"
 
-  - name: "my-apacheds-cluster.domain.tld"
+  - name: "my-apacheds-server.domain.tld"
     type: "cert"
-    src: "/tmp/my-apacheds-cluster.domain.tld.zip"
-    dest: "/usr/share/apacheds/apacheds-2.0.0.AM26/ssl"
+    src: "/tmp/my-apacheds-server.domain.tld.zip"
+    dest: "/usr/share/apacheds/apacheds-2.0.0.AM27/ssl"
     #src_user: "myUser"
     #src_password: "secretPassword"
     dest_user: "apacheds"
