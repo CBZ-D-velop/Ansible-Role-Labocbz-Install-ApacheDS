@@ -1,0 +1,27 @@
+---
+inv_prepare_host__system_users:
+  - login: "apacheds"
+    group: "apacheds"
+
+inv_install_apacheds__version: "2.0.0.AM27"
+inv_install_apacheds__user: "apacheds"
+inv_install_apacheds__group: "apacheds"
+
+inv_install_apacheds__install_dir: "/usr/share/apacheds"
+inv_install_apacheds__path: "{{ inv_install_apacheds__install_dir }}/apacheds-{{ inv_install_apacheds__version }}"
+inv_install_apacheds__ssl_path: "{{ inv_install_apacheds__path }}/ssl"
+
+inv_install_apacheds__instances:
+  - name: "labo-cbz"
+    memory: "2048m"
+    password: "secret"
+    loglevel: "WARN"
+    ssl: true
+    crt_file: "{{ inv_install_apacheds__ssl_path }}/my-apacheds-server.domain.tld/my-apacheds-server.domain.tld.pem.crt"
+    key_file: "{{ inv_install_apacheds__ssl_path }}/my-apacheds-server.domain.tld/my-apacheds-server.domain.tld.pem.key"
+    jks_password: "notRealSecretTo"
+
+  #- name: "notlocal"notRealSecretTo
+  #  memory: "2048m"
+  #  password: "notsecretto"
+  #  loglevel: "WARN"

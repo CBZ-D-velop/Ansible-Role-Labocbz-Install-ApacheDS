@@ -2,14 +2,14 @@
 # Don't forget to keep this file updated
 # molecule/<scenario>/verify.yml
 - name: "Verify"
-  hosts: "all"
+  hosts: "local"
   gather_facts: false
   tasks:
 
     - name: "Get ApacheDS services current state"
-      register: install_apacheds_service_status
-      failed_when: not install_apacheds_service_status.status.ActiveState == 'active'
-      loop: "{{ inv_install_apacheds_instances }}"
+      register: install_apacheds__service_status
+      failed_when: not install_apacheds__service_status.status.ActiveState == 'active'
+      loop: "{{ inv_install_apacheds__instances }}"
       loop_control:
         loop_var: instance
       ansible.builtin.systemd:
@@ -17,29 +17,29 @@
 
     - name: "Check ApacheDS connectivities LDAP"
       when: not (instance.ssl | default(false))
-      loop: "{{ inv_install_apacheds_instances }}"
+      loop: "{{ inv_install_apacheds__instances }}"
       loop_control:
         loop_var: instance
       ansible.builtin.wait_for:
         host: "localhost"
-        port: "{{ instance.ldap_port }}"
+        port: "10389"
         timeout: 120
 
     - name: "Check ApacheDS connectivities LDAPS"
       when: instance.ssl | default(false)
-      loop: "{{ inv_install_apacheds_instances }}"
+      loop: "{{ inv_install_apacheds__instances }}"
       loop_control:
         loop_var: instance
       ansible.builtin.wait_for:
         host: "localhost"
-        port: "{{ instance.ldaps_port }}"
+        port: "10636"
         timeout: 120
 
     - name: "Get default admin informations from instances LDAP"
-      loop: "{{ inv_install_apacheds_instances }}"
+      loop: "{{ inv_install_apacheds__instances }}"
       loop_control:
         loop_var: instance
       register: admin_instance_result
       failed_when: admin_instance_result.stdout == ""
       changed_when: admin_instance_result.rc != 0
-      ansible.builtin.command: "ldapsearch -x -H ldap://localhost:{{ instance.ldap_port }} -D 'uid=admin,ou=system' -b 'dc=example,dc=com' -w '{{ instance.password }}'"
+      ansible.builtin.command: "ldapsearch -x -H ldap://localhost:10389 -D 'uid=admin,ou=system' -b 'dc=example,dc=com' -w '{{ instance.password }}'"
