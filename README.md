@@ -104,14 +104,14 @@ Some vars a required to run this role:
 
 ```YAML
 ---
-install_apacheds_version: "2.0.0.AM26"
-install_apacheds_user: "apacheds"
-install_apacheds_group: "apacheds"
+install_apacheds__version: "2.0.0.AM26"
+install_apacheds__user: "apacheds"
+install_apacheds__group: "apacheds"
 
-install_apacheds_install_dir: "/usr/share/apacheds"
-install_apacheds_path: "{{ install_apacheds_install_dir }}/apacheds-{{ install_apacheds_version }}"
+install_apacheds__install_dir: "/usr/share/apacheds"
+install_apacheds__path: "{{ install_apacheds__install_dir }}/apacheds-{{ install_apacheds__version }}"
 
-install_apacheds_instances:
+install_apacheds__instances:
   - name: "local"
     memory: "2048m"
     password: "notsecret"
@@ -127,18 +127,18 @@ In order to surchage vars, you have multiples possibilities but for mains cases 
 ```YAML
 # From inventory
 ---
-inv_prepare_host_users:
+inv_prepare_host__users:
   - login: "apacheds"
     group: "apacheds"
 
-inv_install_apacheds_version: "2.0.0.AM26"
-inv_install_apacheds_user: "apacheds"
-inv_install_apacheds_group: "apacheds"
+inv_install_apacheds__version: "2.0.0.AM26"
+inv_install_apacheds__user: "apacheds"
+inv_install_apacheds__group: "apacheds"
 
-inv_install_apacheds_install_dir: "/usr/share/apacheds"
-inv_install_apacheds_path: "{{ install_apacheds_install_dir }}/apacheds-{{ install_apacheds_version }}"
+inv_install_apacheds__install_dir: "/usr/share/apacheds"
+inv_install_apacheds__path: "{{ install_apacheds__install_dir }}/apacheds-{{ install_apacheds__version }}"
 
-inv_install_apacheds_instances:
+inv_install_apacheds__instances:
   - name: "local"
     memory: "2048m"
     password: "notsecret"
@@ -164,12 +164,12 @@ To run this role, you can copy the molecule/default/converge.yml playbook and ad
   tags:
     - "labocbz.install_apacheds"
   vars:
-    install_apacheds_version: "{{ inv_install_apacheds_version }}"
-    install_apacheds_user: "{{ inv_install_apacheds_user }}"
-    install_apacheds_group: "{{ inv_install_apacheds_group }}"
-    install_apacheds_install_dir: "{{ inv_install_apacheds_install_dir }}"
-    install_apacheds_path: "{{ inv_install_apacheds_path }}"
-    install_apacheds_instances: "{{ inv_install_apacheds_instances }}"
+    install_apacheds__version: "{{ inv_install_apacheds__version }}"
+    install_apacheds__user: "{{ inv_install_apacheds__user }}"
+    install_apacheds__group: "{{ inv_install_apacheds__group }}"
+    install_apacheds__install_dir: "{{ inv_install_apacheds__install_dir }}"
+    install_apacheds__path: "{{ inv_install_apacheds__path }}"
+    install_apacheds__instances: "{{ inv_install_apacheds__instances }}"
   ansible.builtin.include_role:
     name: "labocbz.install_apacheds"
 ```
@@ -232,6 +232,18 @@ Here you can put your change to keep a trace of your work and decisions.
 * Multi instance doesn't support port edition (can be broken on install / configuration)
 * SSL/TLS materials are prepared, but you have to configure your install to use them
 * Use latest version of ApacheDS 27
+
+### 2024-02-22: New CICD and fixes
+
+* Added support for Ubuntu 22
+* Added support for Debian 11/22
+* Edited vars for linting (role name and __)
+* Added generic support for Docker dind (can add used for obscures reasons ... user in use)
+* Fix idempotency
+* Added informations for UID and GID for user/groups
+* Added support for user password creation (on_create)
+* New CI, need work on tag and releases
+* CI use now Sonarqube
 
 ## Authors
 

@@ -1,12 +1,12 @@
 ---
-install_apacheds_version: "2.0.0.AM26"
-install_apacheds_user: "apacheds"
-install_apacheds_group: "apacheds"
+install_apacheds__version: "2.0.0.AM26"
+install_apacheds__user: "apacheds"
+install_apacheds__group: "apacheds"
 
-install_apacheds_install_dir: "/usr/share/apacheds"
-install_apacheds_path: "{{ install_apacheds_install_dir }}/apacheds-{{ install_apacheds_version }}"
+install_apacheds__install_dir: "/usr/share/apacheds"
+install_apacheds__path: "{{ install_apacheds__install_dir }}/apacheds-{{ install_apacheds__version }}"
 
-install_apacheds_instances:
+install_apacheds__instances:
   - name: "local"
     memory: "2048m"
     password: "notsecret"

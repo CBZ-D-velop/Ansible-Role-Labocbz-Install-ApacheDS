@@ -8,17 +8,17 @@
 Description=ApacheDS LDAP instance: {{ instance.name }}
 
 [Service]
-User={{ install_apacheds_user }}
-Group={{ install_apacheds_user }}
+User={{ install_apacheds__user }}
+Group={{ install_apacheds__user }}
 Wants=network-online.target
 After=network.target network-online.target
 Type=forking
 RuntimeDirectory=apacheds
 RuntimeDirectoryMode=770
-WorkingDirectory={{ install_apacheds_path }}/bin/
-ExecStart={{ install_apacheds_path }}/bin/apacheds.sh {{ instance.name }} start
-ExecStop={{ install_apacheds_path }}/bin/apacheds.sh {{ instance.name }} stop
-ExecReload={{ install_apacheds_path }}/bin/apacheds.sh {{ instance.name }} restart
+WorkingDirectory={{ install_apacheds__path }}/bin/
+ExecStart={{ install_apacheds__path }}/bin/apacheds.sh {{ instance.name }} start
+ExecStop={{ install_apacheds__path }}/bin/apacheds.sh {{ instance.name }} stop
+ExecReload={{ install_apacheds__path }}/bin/apacheds.sh {{ instance.name }} restart
 RemainAfterExit=no
 Restart=on-failure
 LimitNOFILE=60000
@@ -28,5 +28,5 @@ TimeoutSec=600
 WantedBy=multi-user.target
 
 [Service]
-Environment="JAVA_OPTS=-Xms{{ instance.memory }} -Xmx{{ instance.memory }}"
+Environment="java__OPTS=-Xms{{ instance.memory }} -Xmx{{ instance.memory }}"
 
