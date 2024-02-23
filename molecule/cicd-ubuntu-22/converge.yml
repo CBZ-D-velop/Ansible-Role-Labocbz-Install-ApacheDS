@@ -3,13 +3,15 @@
   hosts: "cicd-ubuntu-22"
   tasks:
 
-    - name: "Include labocbz.prepare_host"
+    - name: "Include labocbz.install_apacheds"
       tags:
-        - "labocbz.prepare_host"
+        - "labocbz.install_apacheds"
       vars:
-        prepare_host___users: "{{ inv_prepare_host___users }}"
-        prepare_host___packages_removed: "{{ inv_prepare_host___packages_removed }}"
-        prepare_host___packages_installed: "{{ inv_prepare_host___packages_installed }}"
-        prepare_host___system_users: "{{ inv_prepare_host___system_users }}"
+        install_apacheds__version: "{{ inv_install_apacheds__version }}"
+        install_apacheds__user: "{{ inv_install_apacheds__user }}"
+        install_apacheds__group: "{{ inv_install_apacheds__group }}"
+        install_apacheds__install_dir: "{{ inv_install_apacheds__install_dir }}"
+        install_apacheds__path: "{{ inv_install_apacheds__path }}"
+        install_apacheds__instances: "{{ inv_install_apacheds__instances }}"
       ansible.builtin.include_role:
-        name: "labocbz.prepare_host"
+        name: "labocbz.install_apacheds"
