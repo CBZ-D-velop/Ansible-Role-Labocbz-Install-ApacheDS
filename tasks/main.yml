@@ -1,6 +1,6 @@
 ---
 - name: "Install ldap-utils"
-    retries: 3
+  retries: 3
   delay: 10
   until: "output is success"
   ansible.builtin.package:
